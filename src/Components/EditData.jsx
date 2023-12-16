@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Container, Row } from 'react-bootstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,9 +15,10 @@ const useStyles = makeStyles((theme) => ({
 
 const EditData = () => {
 
-    const  { id }  = useParams()
-    const [ Info, setInfo ] = useState({})
+    const { id } = useParams();
+    const [Info, setInfo] = useState({});
     const classes = useStyles();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         date: '',
         day: '' || "Yes",
@@ -32,23 +33,23 @@ const EditData = () => {
         });
     };
 
-    useEffect(()=>{
+    useEffect(() => {
 
         handleGetData()
 
-    },[])
+    }, [])
 
-    const handleGetData = async() => {
+    const handleGetData = async () => {
 
-        try{
+        try {
 
             const { data } = await axios.get(`http://localhost:4000/api/info/getbyid/${id}`)
             setInfo(data)
-            if(data){
+            if (data) {
                 console.log(data)
             }
 
-        }catch(err){
+        } catch (err) {
 
             console.log(err)
 
@@ -57,21 +58,23 @@ const EditData = () => {
     }
 
 
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
 
-        try{
+        try {
 
-            // const { data } = await axios.get(`http://localhost:4000/api/info/getbyid/${id}`)
-            // setInfo(setInfo)
-            // if(data){
-            //     console.log(data)
-            // }
+            const { data } = await axios.put(`http://localhost:4000/api/info/updatedata/${id}`, {
+                ...formData
+            })
+            if (data) {
+                console.log(data)
+            }
 
-        }catch(err){
+        } catch (err) {
 
-            // console.log(err)
+            console.log(err)
 
         }
+        navigate("/showdata")
 
     }
 
@@ -80,7 +83,7 @@ const EditData = () => {
         <>
             <Container>
                 <Row className={classes.root}>
-                    <h1>{ new Date (Info.date).toDateString()}</h1>
+                    <h1>{new Date(Info.date).toDateString()}</h1>
                     <table className='table'>
                         <thead>
                             <tr>
@@ -91,34 +94,37 @@ const EditData = () => {
                         </thead>
                         <tbody>
 
-                            <td data-label="Date">
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={formData.date}
-                                    onChange={handleInputChange}
-                                />
-                            </td>
-                            <td data-label="Day">
-                                <select id="Day"
-                                    name="day"
-                                    value={formData.day}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </td>
-                            <td data-label="Night">
-                                <select id="Night"
-                                    name="night"
-                                    value={formData.night}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </td>
+                            <tr>
+                                <td data-label="Date">
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleInputChange}
+                                    />
+                                </td>
+                                <td data-label="Day">
+                                    <select id="Day"
+                                        name="day"
+                                        value={formData.day}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </td>
+                                <td data-label="Night">
+                                    <select id="Night"
+                                        name="night"
+                                        value={formData.night}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </td>
+                            </tr>
+
                         </tbody>
                     </table>
                     <Row>
